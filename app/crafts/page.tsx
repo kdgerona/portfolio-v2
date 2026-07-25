@@ -16,7 +16,7 @@ export default function CraftsPage() {
       <PageHeader
         eyebrow="Crafts"
         title="Things I've built"
-        blurb="Real products for real companies — taxi fleets, vehicle rentals, ed-tech, AI workflow automation, and a store platform I founded. Grouped by the companies I built them with."
+        blurb="Everything here shipped. Platforms serving real users today — some built with teams, some end-to-end on my own, and one I founded and still run in production."
       />
 
       {companyGroups.map((group) => (
