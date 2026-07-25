@@ -1,7 +1,7 @@
 export type ProjectLink = {
   label: string;
   url: string;
-  kind: "live" | "github" | "app";
+  kind: "live" | "github";
 };
 
 export type Project = {
@@ -15,6 +15,8 @@ export type Project = {
   images?: string[];
   /** Only links that actually exist, each with its own label. */
   links?: ProjectLink[];
+  /** Non-link badge for an app with no public download URL (e.g. an Android APK). */
+  appBadge?: string;
   /** Renders a "Private codebase" lock note. */
   privateCode?: boolean;
 };
@@ -61,6 +63,7 @@ export const companyGroups: CompanyGroup[] = [
           { label: "Company Portal", url: "https://greatserve.kioscify.com/login", kind: "live" },
           { label: "Code", url: "https://github.com/kdgerona/Kioscify", kind: "github" },
         ],
+        appBadge: "Kiosk App (APK, Android only)",
       },
     ],
   },

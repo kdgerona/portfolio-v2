@@ -11,7 +11,6 @@ const linkIcons: Record<
 > = {
   live: ExternalLink,
   github: FaGithub,
-  app: Smartphone,
 };
 
 export default function ProjectCard({
@@ -72,7 +71,7 @@ export default function ProjectCard({
           ))}
         </ul>
 
-        {(project.links?.length || project.privateCode) && (
+        {(project.links?.length || project.appBadge || project.privateCode) && (
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-edge pt-4 text-sm font-medium">
             {project.links?.map((link) => {
               const Icon = linkIcons[link.kind];
@@ -91,6 +90,12 @@ export default function ProjectCard({
                 </a>
               );
             })}
+            {project.appBadge && (
+              <span className="inline-flex items-center gap-1.5 text-brand-deep">
+                <Smartphone className="size-4" />
+                {project.appBadge}
+              </span>
+            )}
             {project.privateCode && (
               <span className="inline-flex items-center gap-1.5 text-muted">
                 <Lock className="size-4" />

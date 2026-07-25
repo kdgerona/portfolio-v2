@@ -66,8 +66,9 @@ export const companyGroups: CompanyGroup[];
   - No images → keep the current branded wave/initial placeholder.
   - All tags render (no truncation).
   - Links render only when real, each with its own label (Kioscify: Store Portal,
-    Company Portal, Kiosk App APK, GitHub). `privateCode` renders a lock icon +
-    "Private codebase" note.
+    Company Portal, GitHub). The Kiosk App has no public download URL by Kevin's
+    choice — it renders as a non-link `appBadge` with a phone icon instead.
+    `privateCode` renders a lock icon + "Private codebase" note.
   - Optional `role` renders near the title (e.g. "Founder").
 - New `Lightbox` client component, hand-rolled (no new dependencies):
   full-screen overlay, prev/next arrows, dot indicators, Esc to close,
