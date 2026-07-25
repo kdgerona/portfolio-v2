@@ -1,22 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, Images, X } from "lucide-react";
 
 export default function ProjectGallery({
   title,
   images,
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
 }: {
   title: string;
   images: string[];
+  sizes?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const close = useCallback(() => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  }, []);
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         aria-label={`View ${title} screenshots`}
@@ -26,7 +35,7 @@ export default function ProjectGallery({
           src={images[0]}
           alt={`${title} screenshot`}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes={sizes}
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
         {images.length > 1 && (
@@ -37,9 +46,7 @@ export default function ProjectGallery({
         )}
       </button>
 
-      {open && (
-        <Lightbox title={title} images={images} onClose={() => setOpen(false)} />
-      )}
+      {open && <Lightbox title={title} images={images} onClose={close} />}
     </>
   );
 }
@@ -103,7 +110,6 @@ function Lightbox({
           fill
           sizes="90vw"
           className="object-contain"
-          priority
         />
       </div>
 

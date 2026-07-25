@@ -46,7 +46,10 @@ export default function CraftsPage() {
                   group.projects.length === 1 ? "sm:col-span-2" : undefined
                 }
               >
-                <ProjectCard project={project} />
+                <ProjectCard
+                  project={project}
+                  wide={group.projects.length === 1}
+                />
               </Reveal>
             ))}
           </div>

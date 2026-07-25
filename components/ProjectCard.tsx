@@ -14,11 +14,25 @@ const linkIcons: Record<
   app: Smartphone,
 };
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({
+  project,
+  wide = false,
+}: {
+  project: Project;
+  wide?: boolean;
+}) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-edge bg-background shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
       {project.images?.length ? (
-        <ProjectGallery title={project.title} images={project.images} />
+        <ProjectGallery
+          title={project.title}
+          images={project.images}
+          sizes={
+            wide
+              ? "(max-width: 640px) 100vw, (max-width: 1200px) 66vw, 780px"
+              : undefined
+          }
+        />
       ) : (
         /* Branded placeholder for projects without screenshots */
         <div className="relative aspect-[16/10] overflow-hidden bg-panel">
