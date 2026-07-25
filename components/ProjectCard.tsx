@@ -29,7 +29,7 @@ export default function ProjectCard({
           images={project.images}
           sizes={
             wide
-              ? "(max-width: 640px) 100vw, (max-width: 1200px) 66vw, 780px"
+              ? "(max-width: 1024px) 100vw, (max-width: 1200px) 66vw, 780px"
               : undefined
           }
         />
