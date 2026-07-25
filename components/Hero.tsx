@@ -4,11 +4,14 @@ import { ArrowRight, Mail } from "lucide-react";
 import { site } from "@/data/site";
 import RoleRotator from "@/components/RoleRotator";
 import SocialLinks from "@/components/SocialLinks";
-import { HeroBlob, WaveDivider } from "@/components/WaveBlob";
+import { HeroBlob, RippleRings, WaveDivider } from "@/components/WaveBlob";
 
 export default function Hero() {
   return (
     <section className="relative flex min-h-svh flex-col overflow-x-clip md:block">
+      {/* Ripple rings radiating from behind the photo; painted first so the blob covers them on the left */}
+      <RippleRings className="pointer-events-none absolute bottom-[-6%] right-[-25%] z-0 w-[130%] text-brand md:bottom-auto md:right-[-12vw] md:top-[2vh] md:h-[min(100vh,1100px)] md:w-auto" />
+
       {/* Desktop: blue blob fills the left side and S-curves into the white side */}
       <HeroBlob className="pointer-events-none absolute inset-y-0 left-0 hidden h-full w-[58vw] text-panel md:block" />
 

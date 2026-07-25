@@ -42,6 +42,36 @@
   --font-display: var(--font-baloo);
   --font-serif: var(--font-lora);
   --font-sans: var(--font-inter);
+  --animate-ripple-travel: ripple-travel 7s ease-out infinite;
+  --animate-orbit-cw: ripple-orbit 60s linear infinite;
+  --animate-orbit-ccw: ripple-orbit-reverse 100s linear infinite;
+}
+
+@keyframes ripple-orbit {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes ripple-orbit-reverse {
+  to {
+    transform: rotate(-1turn);
+  }
+}
+
+@keyframes ripple-travel {
+  0% {
+    transform: scale(0.34);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.45;
+  }
+  70%,
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
 }
 
 body {
