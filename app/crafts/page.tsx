@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import ProjectCard from "@/components/ProjectCard";
+import RepoCard from "@/components/RepoCard";
 import Reveal from "@/components/Reveal";
-import { companyGroups } from "@/data/projects";
+import { companyGroups, otherProjects } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Crafts — Kevin Dave Gerona",
@@ -55,6 +56,24 @@ export default function CraftsPage() {
           </div>
         </section>
       ))}
+
+      <section className="mt-20">
+        <Reveal>
+          <h2 className="font-display text-3xl font-bold">Other projects</h2>
+          <p className="mt-2 max-w-2xl text-muted">
+            Experiments and side builds from my GitHub — AI tooling, distributed
+            workflow machines, and whatever else I&apos;m tinkering with.
+          </p>
+        </Reveal>
+
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {otherProjects.map((repo, i) => (
+            <Reveal key={repo.url} delay={(i % 3) * 0.08}>
+              <RepoCard repo={repo} />
+            </Reveal>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

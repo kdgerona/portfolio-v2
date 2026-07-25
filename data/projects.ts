@@ -260,3 +260,98 @@ export const companyGroups: CompanyGroup[] = [
     ],
   },
 ];
+
+export type OtherProject = {
+  name: string;
+  description: string;
+  language: string;
+  url: string;
+};
+
+// Curated snapshot of public GitHub repos (github.com/kdgerona) — experiments
+// and side builds that don't warrant a full project card.
+export const otherProjects: OtherProject[] = [
+  {
+    name: "MCP Host — Form Builder",
+    description:
+      "MCP host for the form-builder suite, driving form generation with Ollama and LangChain.",
+    language: "Python",
+    url: "https://github.com/kdgerona/MCP-Host---Form-Builder",
+  },
+  {
+    name: "MCP Server — Form Builder",
+    description: "MCP server exposing form-builder tools to AI hosts.",
+    language: "Python",
+    url: "https://github.com/kdgerona/MCP-Server-Form-Builder-",
+  },
+  {
+    name: "Ollama MCP Chat App",
+    description:
+      "Chat app for talking to local Ollama models through MCP and LangChain.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/Ollama-MCP-Chat-App",
+  },
+  {
+    name: "Form Builder",
+    description:
+      "Versatile form builder that lets users create any type of form and digitize data collection.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/Form-Builder",
+  },
+  {
+    name: "Form Builder API",
+    description: "Backend API powering the Form Builder app.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/Form-Builder-API",
+  },
+  {
+    name: "gRPC Workflow Manager",
+    description:
+      "XState server machine orchestrating distributed workflows over gRPC.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/grpc-workflow-manager",
+  },
+  {
+    name: "gRPC Workflow Worker",
+    description:
+      "XState client machine executing workflow tasks over gRPC.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/grpc-workflow-worker",
+  },
+  {
+    name: "XState Worker Swarming",
+    description: "Experiment in swarming XState worker machines.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/xstate-worker-swarming",
+  },
+  {
+    name: "P2P Chat App (React + Gun)",
+    description: "Peer-to-peer chat frontend built with ReactJS and Gun.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/P2P-Chat-Messaging-App-React-Gun",
+  },
+  {
+    name: "P2P Chat Server (Express + Gun)",
+    description: "Peer-to-peer chat server powered by Express and Gun.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/P2P-Chat-Messaging-App-Server-Express-Gun",
+  },
+  {
+    name: "Kafka Producer & Consumer",
+    description: "Minimal Kafka producer/consumer demo in Node.js.",
+    language: "JavaScript",
+    url: "https://github.com/kdgerona/simple-kafka-producer-and-consumer",
+  },
+  {
+    name: "User-Company GraphQL API",
+    description: "GraphQL API modeling users, companies, and their relations.",
+    language: "TypeScript",
+    url: "https://github.com/kdgerona/user-company-graphql-api",
+  },
+  {
+    name: "Notes App",
+    description: "Quick notes app built with Laravel.",
+    language: "PHP",
+    url: "https://github.com/kdgerona/notes-app-laravel",
+  },
+];
