@@ -40,7 +40,7 @@ export const companyGroups: CompanyGroup[] = [
         tags: [
           "ReactJS", "Redux", "React Native", "Expo", "NativeWind", "NextJS",
           "Tailwind", "NestJS", "Prisma", "Swagger", "MongoDB", "Redis",
-          "Turborepo", "AWS", "DigitalOcean",
+          "Turborepo", "AWS", "DigitalOcean", "Cloudflare"
         ],
         images: [
           "/projects/kioscify/01.jpeg", "/projects/kioscify/02.jpeg",
@@ -127,11 +127,11 @@ export const companyGroups: CompanyGroup[] = [
         description:
           "An internal development platform that streamlines the process of building applications, from initial scaffolding through to production deployment. Enabled engineering teams to move faster by standardizing how new applications are built.",
         tags: [
-          "ReactJS", "TypeScript", "XState", "Tailwind", "NodeJS", "NestJS",
+          "ReactJS", "TypeScript", "XState", "Tailwind", "NodeJS", "NestJS", "Commander",
           "Redis", "RethinkDB", "MongoDB", "Socket.IO", "Kafka", "RabbitMQ",
           "OpenTelemetry", "GraphQL", "gRPC", "MySQL", "Elasticsearch",
           "Nginx", "CI/CD", "AWS", "Linux", "Microservices",
-          "System Design/Architecture",
+          "System Design/Architecture", "Turborepo", "Docker",
         ],
         privateCode: true,
       },
