@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import ProjectCard from "@/components/ProjectCard";
 import Reveal from "@/components/Reveal";
-import { projects } from "@/data/projects";
+import { companyGroups } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Crafts — Kevin Dave Gerona",
-  description: "Selected projects by Kevin Dave Gerona.",
+  description:
+    "Projects by Kevin Dave Gerona — founder-built products, AI workflow platforms, fleet systems, and more, for companies across the Philippines, US, Australia, and Israel.",
 };
 
 export default function CraftsPage() {
@@ -15,16 +16,42 @@ export default function CraftsPage() {
       <PageHeader
         eyebrow="Crafts"
         title="Things I've built"
-        blurb="A selection of projects across the stack — from developer tooling to full products. Each one taught me something worth keeping."
+        blurb="Real products for real companies — taxi fleets, vehicle rentals, ed-tech, AI workflow automation, and a store platform I founded. Grouped by the companies I built them with."
       />
 
-      <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project, i) => (
-          <Reveal key={project.title} delay={(i % 3) * 0.08}>
-            <ProjectCard project={project} />
+      {companyGroups.map((group) => (
+        <section key={group.company} className="mt-16">
+          <Reveal>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <h2 className="font-display text-3xl font-bold">
+                {group.company}
+              </h2>
+              {group.location && (
+                <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-brand-deep">
+                  {group.location}
+                </span>
+              )}
+              {group.note && (
+                <span className="text-sm italic text-muted">{group.note}</span>
+              )}
+            </div>
           </Reveal>
-        ))}
-      </div>
+
+          <div className="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {group.projects.map((project, i) => (
+              <Reveal
+                key={project.title}
+                delay={(i % 3) * 0.08}
+                className={
+                  group.projects.length === 1 ? "sm:col-span-2" : undefined
+                }
+              >
+                <ProjectCard project={project} />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
