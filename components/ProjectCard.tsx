@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { ExternalLink, Lock, Smartphone } from "lucide-react";
+import { BadgeCheck, ExternalLink, Lock, Smartphone } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 import type { Project, ProjectLink } from "@/data/projects";
 import { WaveDivider } from "@/components/WaveBlob";
@@ -59,6 +59,13 @@ export default function ProjectCard({
         <p className="flex-1 text-sm leading-relaxed text-muted">
           {project.description}
         </p>
+
+        {project.highlight && (
+          <p className="flex items-start gap-2.5 rounded-2xl border-l-4 border-brand bg-surface px-4 py-3 text-sm font-medium leading-relaxed text-brand-deep">
+            <BadgeCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
+            {project.highlight}
+          </p>
+        )}
 
         <ul className="flex flex-wrap gap-2">
           {project.tags.map((tag) => (

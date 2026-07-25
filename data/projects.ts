@@ -9,6 +9,8 @@ export type Project = {
   /** e.g. "Founder", "Co-Founder" — rendered as a badge next to the title. */
   role?: string;
   description: string;
+  /** A standout fact rendered as a highlighted callout below the description. */
+  highlight?: string;
   /** Full tech list — every tag renders on the card. */
   tags: string[];
   /** Paths under /public. First entry is the card's cover image. */
@@ -38,7 +40,9 @@ export const companyGroups: CompanyGroup[] = [
         title: "Kioscify",
         role: "Founder",
         description:
-          "A cloud-based, multi-tenant store management and monitoring platform designed and built end-to-end as founder. Spans an Android mobile app, web admin portals for both individual stores and companies, a backend API, and the underlying database architecture. In production with a partner company that runs Kioscify across all of its company-owned stores, plus franchisee-owned stores that are active subscribers.",
+          "A cloud-based, multi-tenant store management and monitoring platform designed and built end-to-end as founder. Spans an Android mobile app, web admin portals for both individual stores and companies, a backend API, and the underlying database architecture.",
+        highlight:
+          "In production with a partner company that runs Kioscify across all of its company-owned stores, plus franchisee-owned stores that are active subscribers.",
         tags: [
           "ReactJS", "Redux", "React Native", "Expo", "NativeWind", "NextJS",
           "Tailwind", "NestJS", "Prisma", "Swagger", "MongoDB", "Redis",
