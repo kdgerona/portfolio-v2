@@ -26,7 +26,7 @@ function Timeline({ entries }: { entries: TimelineEntry[] }) {
         <li key={`${entry.org}-${entry.title}`} className="relative">
           <span
             aria-hidden
-            className="absolute -left-[2.4rem] top-1.5 size-4 rounded-full border-4 border-background bg-brand"
+            className="absolute -left-[2.5625rem] top-1.5 size-4 rounded-full border-4 border-background bg-brand"
           />
           <p className="font-serif text-sm uppercase tracking-widest text-brand-deep">
             {entry.period}
