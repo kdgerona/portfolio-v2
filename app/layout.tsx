@@ -39,7 +39,12 @@ export default function RootLayout({
       className={`${baloo.variable} ${lora.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider attribute="class" disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
