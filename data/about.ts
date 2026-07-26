@@ -119,5 +119,3 @@ export const certifications: Certification[] = [
   },
 ];
 
-// Temporary alias so app/about/page.tsx compiles until Task 2 rewires it. Task 2 deletes this line.
-export const experience: TimelineEntry[] = companyExperience;

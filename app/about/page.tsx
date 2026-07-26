@@ -1,19 +1,29 @@
 import type { Metadata } from "next";
+import { ArrowUpRight } from "lucide-react";
+import { FaLinkedin } from "react-icons/fa6";
 import PageHeader from "@/components/PageHeader";
 import Reveal from "@/components/Reveal";
-import { bio, education, experience } from "@/data/about";
+import { site } from "@/data/site";
+import {
+  bio,
+  certifications,
+  companyExperience,
+  education,
+  freelanceExperience,
+  type TimelineEntry,
+} from "@/data/about";
 
 export const metadata: Metadata = {
   title: "About — Kevin Dave Gerona",
   description:
-    "About Kevin Dave Gerona — Software Engineer, Developer, and Architect.",
+    "About Kevin Dave Gerona — software engineer from Cebu, Philippines: bio, company and freelance experience, education, and certifications.",
 };
 
-function Timeline({ entries }: { entries: typeof experience }) {
+function Timeline({ entries }: { entries: TimelineEntry[] }) {
   return (
     <ol className="relative flex flex-col gap-10 border-l-2 border-edge pl-8">
       {entries.map((entry) => (
-        <li key={`${entry.period}-${entry.title}`} className="relative">
+        <li key={`${entry.org}-${entry.title}`} className="relative">
           <span
             aria-hidden
             className="absolute -left-[2.4rem] top-1.5 size-4 rounded-full border-4 border-background bg-brand"
@@ -28,7 +38,24 @@ function Timeline({ entries }: { entries: typeof experience }) {
               · {entry.org}
             </span>
           </h3>
-          <p className="mt-2 max-w-2xl leading-relaxed text-muted">
+          {(entry.location || entry.chips?.length) && (
+            <ul className="mt-2 flex flex-wrap gap-2">
+              {entry.location && (
+                <li className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-brand-deep">
+                  {entry.location}
+                </li>
+              )}
+              {entry.chips?.map((chip) => (
+                <li
+                  key={chip}
+                  className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-brand-deep"
+                >
+                  {chip}
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-3 max-w-2xl leading-relaxed text-muted">
             {entry.description}
           </p>
         </li>
@@ -55,12 +82,51 @@ export default function AboutPage() {
 
       <Reveal className="mt-20">
         <h2 className="mb-10 font-display text-3xl font-bold">Experience</h2>
-        <Timeline entries={experience} />
+        <h3 className="mb-8 font-serif text-sm uppercase tracking-widest text-muted">
+          Companies
+        </h3>
+        <Timeline entries={companyExperience} />
+        <h3 className="mb-8 mt-14 font-serif text-sm uppercase tracking-widest text-muted">
+          Freelance &amp; Independent
+        </h3>
+        <Timeline entries={freelanceExperience} />
+        <a
+          href={site.socials.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-10 inline-flex items-center gap-2 text-sm font-medium text-brand-deep transition-opacity hover:opacity-70"
+        >
+          <FaLinkedin className="size-4" aria-hidden />
+          Full career history on LinkedIn
+          <ArrowUpRight className="size-4" aria-hidden />
+        </a>
       </Reveal>
 
       <Reveal className="mt-20">
         <h2 className="mb-10 font-display text-3xl font-bold">Education</h2>
         <Timeline entries={education} />
+      </Reveal>
+
+      <Reveal className="mt-20">
+        <h2 className="mb-10 font-display text-3xl font-bold">
+          Certifications
+        </h2>
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {certifications.map((cert) => (
+            <li
+              key={cert.title}
+              className="rounded-3xl border border-edge bg-background p-6 shadow-sm"
+            >
+              <p className="font-serif text-sm uppercase tracking-widest text-brand-deep">
+                {cert.period}
+              </p>
+              <h3 className="mt-1 font-display text-xl font-bold">
+                {cert.title}
+              </h3>
+              <p className="mt-1 text-sm text-muted">{cert.issuer}</p>
+            </li>
+          ))}
+        </ul>
       </Reveal>
     </div>
   );
