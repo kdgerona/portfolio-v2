@@ -1,14 +1,15 @@
 export const bio = {
   lead: "I design and build software end to end — from the first architecture sketch to the last deploy.",
   paragraphs: [
-    "I'm Kevin Dave Gerona, a software engineer based in Cebu, Philippines. Since starting as an intern in 2018, I've grown from developer to team lead to senior engineer — building SaaS platforms, transport systems, and mobile apps for companies across the Philippines, the US, Australia, and Israel.",
-    "Today I'm a Senior Software Engineer at Adaca, working with Australian client teams, and in my own time I'm building Kioscify, a self-service kiosk platform. Through the years I've developed a real passion for system design and software architecture — and for exploring whatever new technology is around the corner. I care as much about clean boundaries as I do about shipped, working product.",
+    "I'm Kevin Dave Gerona, a software engineer based in Cebu, Philippines. Since 2018, I've grown steadily — from developer, to team lead, to senior engineer — building SaaS platforms, transport systems, mobile apps, and complex backend systems, along with the system designs and architectures behind them — and I work with international clients and teams across the Philippines, the US, Australia, and Israel.",
+    "Today I'm a Senior Software Engineer at Adaca, working with Australian client teams, and in my own time I built and founded Kioscify, a multi-tenant smart store management & monitoring platform (DMS). Through the years I've developed a real passion for system design and software architecture — and for exploring whatever new technology is around the corner. I care as much about clean boundaries as I do about shipped, working product.",
   ],
 };
 
 export type TimelineEntry = {
   period: string;
   title: string;
+  subtitle?: string;
   org: string;
   location?: string;
   chips?: string[];
@@ -35,8 +36,9 @@ export const companyExperience: TimelineEntry[] = [
     title: "Senior Lead Full Stack Developer",
     org: "DNA Micro Software Inc.",
     location: "Cebu City, PH",
+    chips: ["US-based"],
     description:
-      "Joined as a Software Engineer building a SaaS application from scratch, and was promoted after a year to Team Lead for the GoRentals and Platform projects — onboarding and training newly hired developers along the way. Advanced to Senior Lead Full Stack Developer leading multiple teams, and also served as Team Lead for Research and Development, where we experimented with and evaluated new tech solutions.",
+      "Joined as part of the pioneering team building a SaaS application from scratch, and was promoted after a year to Team Lead for the GoRentals and Platform projects — onboarding and training newly hired developers along the way. Advanced to Senior Lead Full Stack Developer leading multiple teams, and also served as Team Lead for Research and Development, where we experimented with and evaluated new tech solutions.",
   },
   {
     period: "Apr 2019 — Jul 2020",
@@ -64,7 +66,7 @@ export const freelanceExperience: TimelineEntry[] = [
     org: "Kioscify",
     chips: ["Founder"],
     description:
-      "Building a self-service kiosk SaaS platform — store portal, company portal, and the kiosk app itself — from architecture to release.",
+      "A Smart Store Management & Monitoring Platform (DMS) — store portal, company portal, and the kiosk app itself — built from architecture to release.",
   },
   {
     period: "Jun 2023",
@@ -98,7 +100,8 @@ export const freelanceExperience: TimelineEntry[] = [
 export const education: TimelineEntry[] = [
   {
     period: "Jun 2015 — Mar 2019",
-    title: "BS in Information Technology",
+    title: "Bachelor of Science in Information Technology",
+    subtitle: "Major in Web Applications Development",
     org: "University of San Jose – Recoletos",
     location: "Cebu City, PH",
     description:

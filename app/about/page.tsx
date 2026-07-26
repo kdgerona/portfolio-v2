@@ -38,6 +38,11 @@ function Timeline({ entries }: { entries: TimelineEntry[] }) {
               · {entry.org}
             </span>
           </h3>
+          {entry.subtitle && (
+            <p className="mt-1 font-serif text-base text-muted">
+              {entry.subtitle}
+            </p>
+          )}
           {(entry.location || entry.chips?.length) && (
             <ul className="mt-2 flex flex-wrap gap-2">
               {entry.location && (
@@ -81,7 +86,19 @@ export default function AboutPage() {
       </Reveal>
 
       <Reveal className="mt-20">
-        <h2 className="mb-10 font-display text-3xl font-bold">Experience</h2>
+        <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
+          <h2 className="font-display text-3xl font-bold">Experience</h2>
+          <a
+            href={site.socials.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-medium text-brand-deep transition-opacity hover:opacity-70"
+          >
+            <FaLinkedin className="size-4" aria-hidden />
+            Full career history on LinkedIn
+            <ArrowUpRight className="size-4" aria-hidden />
+          </a>
+        </div>
         <h3 className="mb-8 font-serif text-sm uppercase tracking-widest text-muted">
           Companies
         </h3>
@@ -90,16 +107,6 @@ export default function AboutPage() {
           Freelance &amp; Independent
         </h3>
         <Timeline entries={freelanceExperience} />
-        <a
-          href={site.socials.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-10 inline-flex items-center gap-2 text-sm font-medium text-brand-deep transition-opacity hover:opacity-70"
-        >
-          <FaLinkedin className="size-4" aria-hidden />
-          Full career history on LinkedIn
-          <ArrowUpRight className="size-4" aria-hidden />
-        </a>
       </Reveal>
 
       <Reveal className="mt-20">
@@ -108,9 +115,19 @@ export default function AboutPage() {
       </Reveal>
 
       <Reveal className="mt-20">
-        <h2 className="mb-10 font-display text-3xl font-bold">
-          Certifications
-        </h2>
+        <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
+          <h2 className="font-display text-3xl font-bold">Certifications</h2>
+          <a
+            href={site.socials.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-medium text-brand-deep transition-opacity hover:opacity-70"
+          >
+            <FaLinkedin className="size-4" aria-hidden />
+            View on LinkedIn
+            <ArrowUpRight className="size-4" aria-hidden />
+          </a>
+        </div>
         <ul className="grid gap-4 sm:grid-cols-2">
           {certifications.map((cert) => (
             <li
