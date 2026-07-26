@@ -31,11 +31,13 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Run with Docker
 
+`docker compose up --build` runs two services: the `portfolio` app (internal only) behind `caddy`, which terminates TLS and automatically obtains/renews a Let's Encrypt certificate for the domain in `Caddyfile` (currently `kdgerona.com` / `www.kdgerona.com`). For this to work in production, that domain's DNS must point at the host, and ports 80/443 must be reachable from the internet.
+
 ```bash
 docker compose up --build
 ```
 
-Or without Compose:
+For local testing without a domain, run the app container directly instead (bypasses Caddy/TLS):
 
 ```bash
 docker build -t portfolio .

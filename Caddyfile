@@ -1,0 +1,3 @@
+kdgerona.com, www.kdgerona.com {
+	reverse_proxy portfolio:3000
+}

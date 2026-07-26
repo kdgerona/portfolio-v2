@@ -29,6 +29,7 @@ Dockerfile*
 .dockerignore
 docker-compose*.yml
 compose*.yml
+Caddyfile
 
 # project-specific non-runtime content
 docs
