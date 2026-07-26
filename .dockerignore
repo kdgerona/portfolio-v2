@@ -1,0 +1,41 @@
+# dependencies
+node_modules
+npm-debug.log*
+
+# next.js build output
+.next
+out
+
+# testing / coverage
+coverage
+
+# git & vcs
+.git
+.gitignore
+.github
+
+# env files (defensive — none currently exist)
+.env
+.env*.local
+
+# editors / OS
+.vscode
+.idea
+.DS_Store
+*.pem
+
+# docker meta
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+compose*.yml
+
+# project-specific non-runtime content
+docs
+reference
+.claude
+.superpowers
+AGENTS.md
+CLAUDE.md
+README.md
+*.tsbuildinfo
