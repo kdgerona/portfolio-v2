@@ -1,10 +1,8 @@
-// TODO: replace every entry below with your real bio, experience, and education.
-
 export const bio = {
   lead: "I design and build software end to end — from the first architecture sketch to the last deploy.",
   paragraphs: [
-    "I'm Kevin Dave Gerona, a software engineer who enjoys the whole journey of a product: understanding the problem, shaping the system, and shipping something people actually use. Placeholder bio — swap in your real story here.",
-    "Over the years I've moved between hands-on development and architecture work, which taught me to care equally about clean code and clean boundaries. Placeholder paragraph — replace with your own background and interests.",
+    "I'm Kevin Dave Gerona, a software engineer based in Cebu, Philippines. Since starting as an intern in 2018, I've grown from developer to team lead to senior engineer — building SaaS platforms, transport systems, and mobile apps for companies across the Philippines, the US, Australia, and Israel.",
+    "Today I'm a Senior Software Engineer at Adaca, working with Australian client teams, and in my own time I'm building Kioscify, a self-service kiosk platform. Through the years I've developed a real passion for system design and software architecture — and for exploring whatever new technology is around the corner. I care as much about clean boundaries as I do about shipped, working product.",
   ],
 };
 
@@ -12,39 +10,114 @@ export type TimelineEntry = {
   period: string;
   title: string;
   org: string;
+  location?: string;
+  chips?: string[];
   description: string;
 };
 
-export const experience: TimelineEntry[] = [
+export type Certification = {
+  title: string;
+  issuer: string;
+  period: string;
+};
+
+export const companyExperience: TimelineEntry[] = [
   {
-    period: "2023 — Present",
-    title: "Software Architect",
-    org: "Placeholder Company",
+    period: "Sep 2024 — Present",
+    title: "Senior Software Engineer",
+    org: "Adaca Inc.",
+    location: "AU · Remote",
     description:
-      "Leading system design for a multi-tenant SaaS platform — service boundaries, data modeling, and platform migrations. Placeholder entry.",
+      "Adaca is an Australian offshore engineering and staff-augmentation company. I work embedded with the client company The Desktop, building and maintaining their platform as part of their engineering team.",
   },
   {
-    period: "2020 — 2023",
-    title: "Software Engineer",
-    org: "Placeholder Studio",
+    period: "Aug 2020 — May 2023",
+    title: "Senior Lead Full Stack Developer",
+    org: "DNA Micro Software Inc.",
+    location: "Cebu City, PH",
     description:
-      "Built and shipped full-stack features across web and mobile, owning delivery from spec to production monitoring. Placeholder entry.",
+      "Joined as a Software Engineer building a SaaS application from scratch, and was promoted after a year to Team Lead for the GoRentals and Platform projects — onboarding and training newly hired developers along the way. Advanced to Senior Lead Full Stack Developer leading multiple teams, and also served as Team Lead for Research and Development, where we experimented with and evaluated new tech solutions.",
   },
   {
-    period: "2018 — 2020",
-    title: "Software Developer",
-    org: "Placeholder Agency",
+    period: "Apr 2019 — Jul 2020",
+    title: "Software Development Engineer",
+    org: "Micab Systems Corp.",
+    location: "Cebu City, PH",
     description:
-      "Developed client web applications and internal tooling, and grew from junior to trusted feature owner. Placeholder entry.",
+      "Developed and maintained ReactJS applications with Redux for state management and NodeJS/SailsJS APIs. Built new features, a Flutter mobile app, and a ReactJS PWA — working in an agile environment, handling automation processes, and shipping with Docker.",
+  },
+  {
+    period: "Nov 2018 — Feb 2019",
+    title: "Intern",
+    org: "Ferret9 Creative Solutions",
+    location: "Cebu City, PH",
+    chips: ["Internship"],
+    description:
+      "On-the-job training where I built the Dental Job Staffing System — my first real taste of shipping software for actual users.",
+  },
+];
+
+export const freelanceExperience: TimelineEntry[] = [
+  {
+    period: "Dec 2025 — Present",
+    title: "Founder",
+    org: "Kioscify",
+    chips: ["Founder"],
+    description:
+      "Building a self-service kiosk SaaS platform — store portal, company portal, and the kiosk app itself — from architecture to release.",
+  },
+  {
+    period: "Jun 2023",
+    title: "Co-Founder & Principal Software Engineer",
+    org: "SkAI Technologies",
+    location: "US · Remote",
+    chips: ["Co-Founder"],
+    description:
+      "Co-founded the startup and built the SkAIForm Platform from scratch — overall architecture, infrastructure, and team leadership and training.",
+  },
+  {
+    period: "Mar 2023 — Aug 2023",
+    title: "Senior Software Engineer",
+    org: "TechHub Solutions",
+    location: "US · Remote",
+    chips: ["Part-time"],
+    description:
+      "Started the Ground Command project from scratch with ReactJS, working alongside internal engineers who handled the backend and IoT device integrations.",
+  },
+  {
+    period: "Mar 2023 — Aug 2023",
+    title: "Full Stack Developer",
+    org: "Concise Med",
+    location: "Israel · Remote",
+    chips: ["Part-time"],
+    description:
+      "An EdTech company where I handled the Concise Nursing platform as a full-stack developer — maintaining it and shipping new features. The platform is in production today.",
   },
 ];
 
 export const education: TimelineEntry[] = [
   {
-    period: "2014 — 2018",
-    title: "B.S. Computer Science",
-    org: "Placeholder University",
+    period: "Jun 2015 — Mar 2019",
+    title: "BS in Information Technology",
+    org: "University of San Jose – Recoletos",
+    location: "Cebu City, PH",
     description:
-      "Focused on software engineering and distributed systems. Placeholder entry — add honors, thesis, or activities.",
+      "Collegiate studies focused on software development, capped with the Excellence in Software Development award.",
   },
 ];
+
+export const certifications: Certification[] = [
+  {
+    title: "Software Architecture & Design of Modern Large Scale Systems",
+    issuer: "Udemy",
+    period: "Nov 2023",
+  },
+  {
+    title: "Philippine Information Technology General Certification (Phil-IT GCE, Passer)",
+    issuer: "Phil-IT",
+    period: "Oct 2018",
+  },
+];
+
+// Temporary alias so app/about/page.tsx compiles until Task 2 rewires it. Task 2 deletes this line.
+export const experience: TimelineEntry[] = companyExperience;
