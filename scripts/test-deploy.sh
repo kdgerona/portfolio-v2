@@ -27,7 +27,8 @@ case "$1" in
     shift
     case "$1" in
       pull) echo "${IMAGE_TAG}" >> "$FAKE/images" ;;
-      up) echo "${IMAGE_TAG}" > "$FAKE/running" ;;
+      up) echo "${IMAGE_TAG}" > "$FAKE/running"
+          if [[ " $* " == *" --force-recreate "* ]]; then rm -f "$FAKE/noport"; fi ;;
       ps) echo cid123 ;;
       logs) echo "(fake container logs)" ;;
     esac ;;
@@ -35,6 +36,8 @@ case "$1" in
     if [[ "$*" == *State.Status* ]]; then echo running
     elif grep -qx "$(cat "$FAKE/running")" "$FAKE/bad" 2>/dev/null; then echo unhealthy
     else echo healthy; fi ;;
+  port)
+    if [[ -f "$FAKE/noport" ]]; then :; else echo "0.0.0.0:80"; fi ;;
   image)
     if [[ $2 == ls ]]; then sort -u "$FAKE/images" | sed 's|^|ghcr.io/kdgerona/portfolio-v2:|'; fi ;;
   rmi)
@@ -78,5 +81,11 @@ echo "== 6. first-ever deploy that is unhealthy (nothing to roll back to)"
 rm -f "$WORK/app/.env"
 if "$DEPLOY" "$D"; then check "exits non-zero" nonzero zero; else check "exits non-zero" nonzero nonzero; fi
 check ".env not written" "" "$(tag)"
+
+echo "== 7. caddy running without published ports gets recreated"
+E=$(printf 'e%.0s' {1..40}); : > "$FAKE/bad"; touch "$FAKE/noport"
+"$DEPLOY" "$E"
+check "caddy recreated (ports restored)" "restored" "$([[ -f $FAKE/noport ]] && echo missing || echo restored)"
+check "E recorded in .env" "$E" "$(tag)"
 
 if ((fails == 0)); then echo "ALL PASSED"; else echo "$fails FAILED"; exit 1; fi

@@ -39,7 +39,19 @@ if [[ -f .env ]]; then
   PREV_TAG="$(sed -n 's/^IMAGE_TAG=//p' .env | tail -n 1)"
 fi
 
-compose_up() { IMAGE_TAG="$1" docker compose up -d --remove-orphans; }
+# A caddy container created while 80/443 were taken can come back later (restart
+# policy) running with no published ports. Recreate it if that happened.
+ensure_caddy_ports() {
+  local cid
+  cid="$(IMAGE_TAG="$1" docker compose ps -q caddy 2>/dev/null || true)"
+  [[ -n $cid ]] || return 0
+  if [[ -z "$(docker port "$cid" 80/tcp 2>/dev/null || true)" ]]; then
+    log "caddy has no published port 80; recreating it"
+    IMAGE_TAG="$1" docker compose up -d --force-recreate caddy
+  fi
+}
+
+compose_up() { IMAGE_TAG="$1" docker compose up -d --remove-orphans && ensure_caddy_ports "$1"; }
 
 # Returns 0 once the portfolio container is healthy, 1 if it goes unhealthy,
 # stops running, or does not become healthy within HEALTH_TIMEOUT.

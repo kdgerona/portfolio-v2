@@ -125,7 +125,9 @@ sudo install -d -m 700 -o deploy -g deploy /home/deploy/.ssh /home/deploy/portfo
 echo '<PASTE deploy_key.pub CONTENTS>' | sudo tee /home/deploy/.ssh/authorized_keys
 sudo chown deploy:deploy /home/deploy/.ssh/authorized_keys && sudo chmod 600 /home/deploy/.ssh/authorized_keys
 # if the site is currently running from another checkout, stop it first to free ports 80/443:
-#   cd <old checkout> && docker compose down
+#   cd <old checkout> && docker compose down   # no -v
+# afterwards run docker compose ONLY in ~/portfolio: compose names a stack after its folder,
+# so running it in another checkout creates a second stack the pipeline never updates
 ssh-keyscan -t ed25519 localhost 2>/dev/null | sed 's/^localhost/portfolio-droplet/'   # host key for DEPLOY_KNOWN_HOSTS
 ```
 
