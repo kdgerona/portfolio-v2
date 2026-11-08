@@ -1,9 +1,8 @@
 {
-    "mcpServers": {
-      "playwright": {
-        "command": "npx",
-        "args": ["@playwright/mcp@latest", "--headless",
-                 "--output-dir", "/workspace/_qa-artifacts"]
-      }
+  "mcpServers": {
+    "playwright": {
+      "command": "sh",
+      "args": ["scripts/playwright-mcp.sh"]
     }
   }
+}
