@@ -84,7 +84,7 @@ Do these in order. Do not merge to `main` until step 8 is done, because the firs
 
 Remove the default allow-all (`"*"`) rule: `*` also matches tagged devices, so it would let `tag:ci` reach everything. The first rule above keeps access for your own devices; the second limits `tag:ci` to the droplet on port 22.
 
-**2. OAuth client for CI.** *Settings > Trust credentials > Credential > OAuth* (older UI: *Settings > OAuth clients*). Scope: `auth_keys` (write), tag: `tag:ci`. Save the client ID and secret for step 6.
+**2. OAuth client for CI.** *Settings > Trust credentials > Credential > OAuth*. Step 1 (Settings): name it `github-ci`. Step 2 (Scopes): leave *Custom scopes*, tick nothing under General or Devices, scroll to **Keys > Auth Keys** and tick **Write** only. Choosing that scope makes a *Tags* field appear: select `tag:ci`. Generate, then save the client ID and secret for step 6 (the secret is shown once).
 
 **3. Install Tailscale on the droplet** (SSH in the way you do today):
 
