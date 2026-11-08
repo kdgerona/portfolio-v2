@@ -55,6 +55,7 @@ PR          -> verify (lint, tsc, next build) + docker build (no push, no secret
 merge main  -> verify -> publish ghcr.io/kdgerona/portfolio-v2:{<sha>,latest}
                       -> deploy: join tailnet (ephemeral) -> ssh deploy@droplet -> scripts/deploy.sh <sha>
                          pull, up -d, wait for healthy, roll back to previous sha on failure, prune old images
+                      -> smoke: scripts/smoke.sh https://kdgerona.com (/ and /about: HTTP 200 + "Kevin Dave Gerona")
 ```
 
 Workflow: `.github/workflows/ci.yml`. Deploy script: `scripts/deploy.sh` (runs on the droplet). Offline test of the script, including rollback: `scripts/test-deploy.sh`.
@@ -152,6 +153,10 @@ Then delete the local key: `shred -u deploy_key deploy_key.pub`.
 **9. Make the GHCR package public.** GitHub > your profile > *Packages* > `portfolio-v2` > *Package settings* > *Change visibility* > Public. Then re-run the failed workflow run (*Re-run failed jobs*). The droplet pulls without any registry login.
 
 **10. Close public port 22** in the DigitalOcean Cloud Firewall (remove the inbound SSH rule), only after steps 7 and 9 succeeded. Keep ports 80 and 443 open. Recovery if you lock yourself out: DO web console (Droplet > Access > Launch console).
+
+### Smoke check
+
+The `smoke` job runs after a successful deploy and fails the run if `https://kdgerona.com/` or `/about` does not return 200 with the text "Kevin Dave Gerona" (10 tries, 6s apart, to allow for Caddy/container warm-up). Reproduce locally: `scripts/smoke.sh` (optional args: base URL, marker). Failure output: `HTTP 000` = unreachable (Caddy, DNS, droplet); `HTTP 404/5xx` = app problem; `marker not found` = wrong content served. It does not roll back; `deploy.sh` already does that on a failed healthcheck.
 
 ### After merging: check
 

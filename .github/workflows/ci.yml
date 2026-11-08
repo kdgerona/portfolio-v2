@@ -129,3 +129,17 @@ jobs:
           tar czf - docker-compose.yml Caddyfile scripts/deploy.sh \
             | $SSH 'mkdir -p ~/portfolio && tar xzf - -C ~/portfolio'
           $SSH "~/portfolio/scripts/deploy.sh $SHA"
+
+  # main only, after a successful deploy: confirm the public site serves the portfolio.
+  # Needs no secrets and no checkout beyond the script; curl/grep only.
+  smoke:
+    name: Smoke check kdgerona.com
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - run: scripts/smoke.sh https://kdgerona.com

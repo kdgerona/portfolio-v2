@@ -90,4 +90,5 @@ Docker + Caddy on a single host. `docker-compose.yml` runs `portfolio` (exposes 
 - `deploy.sh` runs on the droplet: pull, `up -d`, wait healthy, auto-rollback to the previous SHA, prune to current + previous. The deployed tag lives in `~/portfolio/.env` on the droplet.
 - Publish/deploy jobs must stay gated to `push` on `refs/heads/main`. Never use `pull_request_target` or expose secrets to PR jobs (public repo).
 - Validate changes with `actionlint` and `shellcheck scripts/*.sh`; `scripts/test-deploy.sh` tests deploy/rollback offline with a fake docker.
+- `smoke` job (after `deploy`, same main-only gate) runs `scripts/smoke.sh https://kdgerona.com`: `/` and `/about` must return 200 and contain "Kevin Dave Gerona" (retries 10x, 6s apart). Red `smoke` = site not serving after deploy: run the script locally to see which URL/why (`HTTP 000` = unreachable/Caddy/DNS, `404/5xx` = app, `marker not found` = wrong page or rebrand). It does not roll back; deploy.sh's healthcheck does that. Needs only curl/grep.
 - Agents do not touch the droplet, secrets or `main`; setup steps and rollback are in the README ("CI/CD and deployment").
