@@ -59,7 +59,7 @@ merge main  -> verify -> publish ghcr.io/kdgerona/portfolio-v2:{<sha>,latest}
 
 Workflow: `.github/workflows/ci.yml`. Deploy script: `scripts/deploy.sh` (runs on the droplet). Offline test of the script, including rollback: `scripts/test-deploy.sh`.
 
-How files reach the droplet: the deploy job copies `docker-compose.yml`, `Caddyfile` and `scripts/deploy.sh` from the exact commit being deployed into `~/portfolio` on the droplet (tar over SSH). There is no git checkout on the droplet. The image tag in use is recorded in `~/portfolio/.env` (`IMAGE_TAG=<sha>`).
+How files reach the droplet: the deploy job copies `docker-compose.yml`, `Caddyfile` and `scripts/deploy.sh` from the exact commit being deployed into `~/portfolio` of the `deploy` user (`/home/deploy/portfolio`, not root's home) (tar over SSH). There is no git checkout on the droplet. The image tag in use is recorded in `~/portfolio/.env` (`IMAGE_TAG=<sha>`).
 
 Safety: deploy and publish jobs run only for `push` to `main`. Nothing uses `pull_request_target`, and the only secrets live in the deploy job, so fork PRs can never reach them or the droplet. Deploys are serialized by a `concurrency` group.
 
@@ -126,7 +126,7 @@ echo '<PASTE deploy_key.pub CONTENTS>' | sudo tee /home/deploy/.ssh/authorized_k
 sudo chown deploy:deploy /home/deploy/.ssh/authorized_keys && sudo chmod 600 /home/deploy/.ssh/authorized_keys
 # if the site is currently running from another checkout, stop it first to free ports 80/443:
 #   cd <old checkout> && docker compose down   # no -v
-# afterwards run docker compose ONLY in ~/portfolio: compose names a stack after its folder,
+# afterwards run docker compose ONLY in /home/deploy/portfolio (as the deploy user): compose names a stack after its folder,
 # so running it in another checkout creates a second stack the pipeline never updates
 ssh-keyscan -t ed25519 localhost 2>/dev/null | sed 's/^localhost/portfolio-droplet/'   # host key for DEPLOY_KNOWN_HOSTS
 ```
