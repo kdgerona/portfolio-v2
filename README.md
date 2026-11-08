@@ -67,7 +67,7 @@ Safety: deploy and publish jobs run only for `push` to `main`. Nothing uses `pul
 
 Do these in order. Do not merge to `main` until step 8 is done, because the first merge triggers a real deploy.
 
-**1. Tailscale account and tailnet policy.** Sign up at <https://login.tailscale.com> (Personal plan, free). In *Access controls* add tags and a rule so CI can only reach the droplet's SSH port (merge into your existing policy; `you@example.com` is your Tailscale login):
+**1. Tailscale account and tailnet policy.** Sign up at <https://login.tailscale.com> (Personal plan, free). Open *Access controls > JSON editor* and replace the policy with the one below, so CI can only reach the droplet's SSH port (`you@example.com` is your Tailscale login):
 
 ```json
 {
@@ -76,12 +76,13 @@ Do these in order. Do not merge to `main` until step 8 is done, because the firs
     "tag:droplet": ["you@example.com"]
   },
   "acls": [
+    {"action": "accept", "src": ["autogroup:member"], "dst": ["*:*"]},
     {"action": "accept", "src": ["tag:ci"], "dst": ["tag:droplet:22"]}
   ]
 }
 ```
 
-If you already have a permissive `"*"` rule, keep it for your own devices; the point is that `tag:ci` is limited to the droplet on port 22.
+Remove the default allow-all (`"*"`) rule: `*` also matches tagged devices, so it would let `tag:ci` reach everything. The first rule above keeps access for your own devices; the second limits `tag:ci` to the droplet on port 22.
 
 **2. OAuth client for CI.** *Settings > Trust credentials > Credential > OAuth* (older UI: *Settings > OAuth clients*). Scope: `auth_keys` (write), tag: `tag:ci`. Save the client ID and secret for step 6.
 
