@@ -49,7 +49,7 @@ Edit data, not JSX. Types are defined at the top of each file; follow them.
 
 - **Project** — add an object to a `companyGroups[].projects` array in `data/projects.ts` (or a new `CompanyGroup`). Order is deliberate (significance, founder work first). Only add `links` that really exist; use `images` paths under `/public/projects/`.
 - **Skill** — add a string to a `skillCategories[].skills` array in `data/skills.ts` (skills are merged from project tech stacks; keep them consistent with `projects.ts`).
-- **About entry** — add a `TimelineEntry` to `companyExperience` (or the freelance list) / `Certification` list in `data/about.ts`; bio text is `bio`.
+- **About entry** — add a `TimelineEntry` to `companyExperience`, `freelanceExperience` or `education`, or a `Certification` to `certifications`, in `data/about.ts`; bio text is `bio`.
 - **Nav, socials, email, roles** — `data/site.ts`.
 
 The contact form has no backend: it builds a `mailto:` link to `site.email`.
