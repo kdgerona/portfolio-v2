@@ -91,9 +91,12 @@ Remove the default allow-all (`"*"`) rule: `*` also matches tagged devices, so i
 ```bash
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up --advertise-tags=tag:droplet --hostname=portfolio-droplet
-# open the printed URL to authorise; then note the tailnet IP:
-tailscale ip -4
+# it prints a URL: open it in your browser, log in with the same Tailscale
+# account as step 1 and approve the device. The command then returns by itself.
+tailscale ip -4      # prints 100.x.y.z when it joined
 ```
+
+Yes, this needs one browser login, once. Afterwards the droplet stays on the tailnet by itself (reboot-safe). In the admin console *Machines* tab, `portfolio-droplet` should show tag `tag:droplet`. If it shows your user instead of a tag, re-run `sudo tailscale up --advertise-tags=tag:droplet --hostname=portfolio-droplet --reset`. Optional: on that machine's `...` menu choose *Disable key expiry* so it never drops off the tailnet after 180 days.
 
 **4. 1 GB swap on the droplet** (512 MB RAM safety margin):
 
