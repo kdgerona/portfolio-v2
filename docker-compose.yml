@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: portfolio:latest
+    image: ghcr.io/kdgerona/portfolio-v2:${IMAGE_TAG:-latest}
     expose:
       - "3000"
     restart: unless-stopped
