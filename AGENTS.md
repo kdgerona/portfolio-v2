@@ -67,7 +67,7 @@ The contact form has no backend: it builds a `mailto:` link to `site.email`.
 
 ## Deployment
 
-Docker + Caddy on a single host. `docker-compose.yml` runs `portfolio` (exposes 3000 internally only) and `caddy` (publishes 80/443, automatic TLS, reverse-proxies `kdgerona.com` and `www.kdgerona.com` to `portfolio:3000`; cert state in the `caddy_data` volume). DNS for both hostnames must point at the host and ports 80/443 must be reachable for certificate issuance. The container runs as the non-root `node` user and has a `/` healthcheck. No CI/CD is documented here.
+Docker + Caddy on a single host. `docker-compose.yml` runs `portfolio` (exposes 3000 internally only) and `caddy` (publishes 80/443, automatic TLS, reverse-proxies `kdgerona.com` and `www.kdgerona.com` to `portfolio:3000`; cert state in the `caddy_data` volume). DNS for both hostnames must point at the host and ports 80/443 must be reachable for certificate issuance. The container runs as the non-root `node` user and has a `/` healthcheck. CI/CD is described in the Deploy section below.
 
 ## Git and workflow
 
@@ -83,3 +83,11 @@ Docker + Caddy on a single host. `docker-compose.yml` runs `portfolio` (exposes 
 - Don't change the Caddy domains/TLS config, ports, or Dockerfile/compose without DevOps involvement.
 - Keep `CLAUDE.md` as just `@AGENTS.md`.
 - Don't add dependencies or config changes as a side effect of content or docs work.
+
+## Deploy
+
+- CI/CD is `.github/workflows/ci.yml`: PRs run lint, `tsc --noEmit`, `next build` and a docker build (no push). Pushes to `main` publish `ghcr.io/kdgerona/portfolio-v2:{sha,latest}` and deploy to the droplet over Tailscale (ephemeral OAuth node, ssh as `deploy`, `scripts/deploy.sh <sha>`).
+- `deploy.sh` runs on the droplet: pull, `up -d`, wait healthy, auto-rollback to the previous SHA, prune to current + previous. The deployed tag lives in `~/portfolio/.env` on the droplet.
+- Publish/deploy jobs must stay gated to `push` on `refs/heads/main`. Never use `pull_request_target` or expose secrets to PR jobs (public repo).
+- Validate changes with `actionlint` and `shellcheck scripts/*.sh`; `scripts/test-deploy.sh` tests deploy/rollback offline with a fake docker.
+- Agents do not touch the droplet, secrets or `main`; setup steps and rollback are in the README ("CI/CD and deployment").

@@ -46,6 +46,132 @@ docker run --rm -p 3000:3000 portfolio
 
 Open [http://localhost:3000](http://localhost:3000) once the container is running.
 
+## CI/CD and deployment
+
+Every push to a PR runs CI. Every merge to `main` builds the image on GitHub, pushes it to GHCR and deploys it to the DigitalOcean droplet over Tailscale. Cost: $0 (GitHub Actions on a public repo, GHCR, Tailscale Personal).
+
+```
+PR          -> verify (lint, tsc, next build) + docker build (no push, no secrets)
+merge main  -> verify -> publish ghcr.io/kdgerona/portfolio-v2:{<sha>,latest}
+                      -> deploy: join tailnet (ephemeral) -> ssh deploy@droplet -> scripts/deploy.sh <sha>
+                         pull, up -d, wait for healthy, roll back to previous sha on failure, prune old images
+```
+
+Workflow: `.github/workflows/ci.yml`. Deploy script: `scripts/deploy.sh` (runs on the droplet). Offline test of the script, including rollback: `scripts/test-deploy.sh`.
+
+How files reach the droplet: the deploy job copies `docker-compose.yml`, `Caddyfile` and `scripts/deploy.sh` from the exact commit being deployed into `~/portfolio` on the droplet (tar over SSH). There is no git checkout on the droplet. The image tag in use is recorded in `~/portfolio/.env` (`IMAGE_TAG=<sha>`).
+
+Safety: deploy and publish jobs run only for `push` to `main`. Nothing uses `pull_request_target`, and the only secrets live in the deploy job, so fork PRs can never reach them or the droplet. Deploys are serialized by a `concurrency` group.
+
+### One-time setup (Board)
+
+Do these in order. Do not merge to `main` until step 8 is done, because the first merge triggers a real deploy.
+
+**1. Tailscale account and tailnet policy.** Sign up at <https://login.tailscale.com> (Personal plan, free). In *Access controls* add tags and a rule so CI can only reach the droplet's SSH port (merge into your existing policy; `you@example.com` is your Tailscale login):
+
+```json
+{
+  "tagOwners": {
+    "tag:ci":      ["you@example.com"],
+    "tag:droplet": ["you@example.com"]
+  },
+  "acls": [
+    {"action": "accept", "src": ["tag:ci"], "dst": ["tag:droplet:22"]}
+  ]
+}
+```
+
+If you already have a permissive `"*"` rule, keep it for your own devices; the point is that `tag:ci` is limited to the droplet on port 22.
+
+**2. OAuth client for CI.** *Settings > Trust credentials > Credential > OAuth* (older UI: *Settings > OAuth clients*). Scope: `auth_keys` (write), tag: `tag:ci`. Save the client ID and secret for step 6.
+
+**3. Install Tailscale on the droplet** (SSH in the way you do today):
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up --advertise-tags=tag:droplet --hostname=portfolio-droplet
+# open the printed URL to authorise; then note the tailnet IP:
+tailscale ip -4
+```
+
+**4. 1 GB swap on the droplet** (512 MB RAM safety margin):
+
+```bash
+sudo fallocate -l 1G /swapfile && sudo chmod 600 /swapfile
+sudo mkswap /swapfile && sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+free -h
+```
+
+**5. Create the `deploy` user** (non-root, can run docker, key-only). Generate the key on your laptop; the private key goes into GitHub in step 6, never into the repo:
+
+```bash
+# on your laptop
+ssh-keygen -t ed25519 -N '' -C 'github-actions-deploy' -f ./deploy_key
+cat deploy_key.pub        # paste into the command below
+```
+
+```bash
+# on the droplet
+sudo adduser --disabled-password --gecos '' deploy
+sudo usermod -aG docker deploy
+sudo install -d -m 700 -o deploy -g deploy /home/deploy/.ssh /home/deploy/portfolio
+echo '<PASTE deploy_key.pub CONTENTS>' | sudo tee /home/deploy/.ssh/authorized_keys
+sudo chown deploy:deploy /home/deploy/.ssh/authorized_keys && sudo chmod 600 /home/deploy/.ssh/authorized_keys
+# if the site is currently running from another checkout, stop it first to free ports 80/443:
+#   cd <old checkout> && docker compose down
+ssh-keyscan -t ed25519 localhost 2>/dev/null | sed 's/^localhost/portfolio-droplet/'   # host key for DEPLOY_KNOWN_HOSTS
+```
+
+Note: `docker` group membership is root-equivalent on that host. That is accepted here because the key only works over the tailnet and only from `tag:ci`.
+
+**6. GitHub repository secrets** (*Settings > Secrets and variables > Actions > New repository secret*):
+
+| Secret | Value |
+|---|---|
+| `TS_OAUTH_CLIENT_ID` | OAuth client ID from step 2 |
+| `TS_OAUTH_SECRET` | OAuth client secret from step 2 |
+| `DEPLOY_HOST` | `portfolio-droplet` (MagicDNS name) or the tailnet IP from step 3 |
+| `DEPLOY_SSH_KEY` | full contents of `deploy_key` (private key, including BEGIN/END lines) |
+| `DEPLOY_KNOWN_HOSTS` | one line: `<DEPLOY_HOST value> ssh-ed25519 AAAA...` (output of the `ssh-keyscan` line in step 5, with the host name equal to `DEPLOY_HOST`) |
+
+Then delete the local key: `shred -u deploy_key deploy_key.pub`.
+
+**7. Confirm Tailscale SSH access from your laptop** (with Tailscale installed on it and logged in): `ssh deploy@portfolio-droplet 'docker ps'` must work using the same key.
+
+**8. Merge the PR to `main`.** The first run publishes the image, but the deploy job's pull will fail until the package is public (step 9). That is expected on the first run only.
+
+**9. Make the GHCR package public.** GitHub > your profile > *Packages* > `portfolio-v2` > *Package settings* > *Change visibility* > Public. Then re-run the failed workflow run (*Re-run failed jobs*). The droplet pulls without any registry login.
+
+**10. Close public port 22** in the DigitalOcean Cloud Firewall (remove the inbound SSH rule), only after steps 7 and 9 succeeded. Keep ports 80 and 443 open. Recovery if you lock yourself out: DO web console (Droplet > Access > Launch console).
+
+### After merging: check
+
+- Actions tab: `CI` run on `main` is green for verify, publish and deploy.
+- `ssh deploy@portfolio-droplet 'cd ~/portfolio && cat .env && docker compose ps'` shows `IMAGE_TAG=<merge commit sha>` and `portfolio` as `healthy`.
+- <https://kdgerona.com> loads.
+
+### Logs
+
+- Deploy output: the `Deploy to droplet` job log in GitHub Actions.
+- App/proxy logs on the droplet: `cd ~/portfolio && docker compose logs --tail 100 portfolio caddy`.
+
+### Rolling back
+
+Automatic: if the new container is not healthy within 180 s, `deploy.sh` restarts the previous SHA and the job fails (red run).
+
+Manual, to any earlier commit (its image must still exist in GHCR; the droplet keeps only current + previous locally and pulls the rest):
+
+```bash
+ssh deploy@portfolio-droplet '~/portfolio/scripts/deploy.sh <full-40-char-sha>'
+```
+
+or re-run the workflow run of the good commit (*Re-run all jobs*). Note a later merge to `main` will deploy forward again, so revert the bad commit on `main` as well.
+
+### Local development is unchanged
+
+`docker compose up --build` still builds locally (the `build:` block is kept) and tags the result `ghcr.io/kdgerona/portfolio-v2:latest`.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
