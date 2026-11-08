@@ -109,6 +109,8 @@ free -h
 
 **5. Create the `deploy` user** (non-root, can run docker, key-only). Generate the key on your laptop; the private key goes into GitHub in step 6, never into the repo:
 
+This is a key pair: the public half goes on the droplet (so it accepts GitHub), the private half goes into GitHub (step 6). Generating it on your laptop means the private key never sits on the server. Any machine you control works (not the droplet, unless you delete the private key afterwards).
+
 ```bash
 # on your laptop
 ssh-keygen -t ed25519 -N '' -C 'github-actions-deploy' -f ./deploy_key
