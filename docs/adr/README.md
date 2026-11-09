@@ -8,6 +8,7 @@ that supersedes the old one, and update the old one's status to
 | ADR | Title | Status |
 | --- | --- | --- |
 | [0001](0001-static-nextjs-site-on-single-docker-host.md) | Static Next.js site, content as typed TS, Docker + Caddy on a single host | Accepted |
+| [0002](0002-edge-security-headers-pinned-caddy-and-log-caps.md) | Edge hardening: security headers, pinned Caddy, capped container logs | Accepted |
 
 ## Template
 

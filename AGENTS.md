@@ -68,7 +68,7 @@ The contact form has no backend: it builds a `mailto:` link to `site.email`.
 
 ## Deployment
 
-Docker + Caddy on a single host. `docker-compose.yml` runs `portfolio` (exposes 3000 internally only) and `caddy` (publishes 80/443, automatic TLS, reverse-proxies `kdgerona.com` and `www.kdgerona.com` to `portfolio:3000`; cert state in the `caddy_data` volume). DNS for both hostnames must point at the host and ports 80/443 must be reachable for certificate issuance. The container runs as the non-root `node` user and has a `/` healthcheck. CI/CD is described in the Deploy section below.
+Docker + Caddy on a single host. `docker-compose.yml` runs `portfolio` (exposes 3000 internally only) and `caddy` (publishes 80/443, automatic TLS, reverse-proxies `kdgerona.com` and `www.kdgerona.com` to `portfolio:3000`; cert state in the `caddy_data` volume). DNS for both hostnames must point at the host and ports 80/443 must be reachable for certificate issuance. The `Caddyfile` sets security headers (HSTS without `preload`, nosniff, referrer policy, `frame-ancestors 'none'`) and `docker-compose.yml` pins Caddy to an exact 2.x tag and caps container logs (ADR 0002); the `Caddyfile` is bind-mounted, so a Caddyfile-only change needs `caddy` recreated to take effect. The container runs as the non-root `node` user and has a `/` healthcheck. CI/CD is described in the Deploy section below.
 
 ## Git and workflow
 
