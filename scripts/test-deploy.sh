@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Offline test of scripts/deploy.sh using a fake `docker` on PATH (no daemon
 # needed). Covers: first deploy, upgrade + prune, failing healthcheck -> rollback,
-# failing first deploy (nothing to roll back to), and bad input.
+# failing first deploy (nothing to roll back to), bad input, and Caddyfile
+# change detection (changed / unchanged / no stored hash / failed deploy).
 #
 # Usage: scripts/test-deploy.sh
 set -euo pipefail
@@ -12,6 +13,7 @@ trap 'rm -rf "$WORK"' EXIT
 mkdir -p "$WORK/app/scripts" "$WORK/bin"
 cp "$SRC/scripts/deploy.sh" "$WORK/app/scripts/"
 touch "$WORK/app/docker-compose.yml"
+echo 'v1' > "$WORK/app/Caddyfile"
 
 A=$(printf 'a%.0s' {1..40})
 B=$(printf 'b%.0s' {1..40})
@@ -28,6 +30,7 @@ case "$1" in
     case "$1" in
       pull) echo "${IMAGE_TAG}" >> "$FAKE/images" ;;
       up) echo "${IMAGE_TAG}" > "$FAKE/running"
+          if [[ " $* " == *" --force-recreate "* && " $* " == *" caddy"* ]]; then echo x >> "$FAKE/caddy_recreates"; fi
           if [[ " $* " == *" --force-recreate "* ]]; then rm -f "$FAKE/noport"; fi ;;
       ps) echo cid123 ;;
       logs) echo "(fake container logs)" ;;
@@ -87,5 +90,36 @@ E=$(printf 'e%.0s' {1..40}); : > "$FAKE/bad"; touch "$FAKE/noport"
 "$DEPLOY" "$E"
 check "caddy recreated (ports restored)" "restored" "$([[ -f $FAKE/noport ]] && echo missing || echo restored)"
 check "E recorded in .env" "$E" "$(tag)"
+
+recreates() { wc -l < "$FAKE/caddy_recreates" 2>/dev/null | tr -d ' ' || echo 0; }
+n0() { [[ -f $FAKE/caddy_recreates ]] && recreates || echo 0; }
+
+echo "== 8. Caddyfile unchanged -> caddy left alone"
+F=$(printf 'f%.0s' {1..40})
+before=$(n0); "$DEPLOY" "$F"
+check "no caddy recreate" "$before" "$(n0)"
+
+echo "== 9. Caddyfile changed -> caddy recreated once, hash recorded"
+echo 'v2' > "$WORK/app/Caddyfile"
+before=$(n0); G=$(printf '1%.0s' {1..40}); "$DEPLOY" "$G"
+check "caddy recreated once" "$((before + 1))" "$(n0)"
+check "hash recorded" "$(sha256sum "$WORK/app/Caddyfile" | cut -d' ' -f1)" "$(cat "$WORK/app/.caddyfile.sha256")"
+before=$(n0); H=$(printf '2%.0s' {1..40}); "$DEPLOY" "$H"
+check "next deploy does not recreate again" "$before" "$(n0)"
+
+echo "== 10. no stored hash (first run) -> recreate once"
+rm -f "$WORK/app/.caddyfile.sha256"
+before=$(n0); I=$(printf '3%.0s' {1..40}); "$DEPLOY" "$I"
+check "caddy recreated once" "$((before + 1))" "$(n0)"
+
+echo "== 11. Caddyfile changed but the deploy rolls back -> caddy untouched, hash not recorded"
+echo 'v3' > "$WORK/app/Caddyfile"; J=$(printf '4%.0s' {1..40}); echo "$J" > "$FAKE/bad"
+before=$(n0); old_hash=$(cat "$WORK/app/.caddyfile.sha256")
+if "$DEPLOY" "$J"; then check "failed deploy exits non-zero" nonzero zero; else check "failed deploy exits non-zero" nonzero nonzero; fi
+check "no caddy recreate on failed deploy" "$before" "$(n0)"
+check "hash unchanged" "$old_hash" "$(cat "$WORK/app/.caddyfile.sha256")"
+: > "$FAKE/bad"
+before=$(n0); "$DEPLOY" "$J"
+check "next good deploy applies the Caddyfile" "$((before + 1))" "$(n0)"
 
 if ((fails == 0)); then echo "ALL PASSED"; else echo "$fails FAILED"; exit 1; fi

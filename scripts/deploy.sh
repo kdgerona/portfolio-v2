@@ -11,10 +11,13 @@
 #   2. docker compose up -d with IMAGE_TAG=<sha>
 #   3. wait for the `portfolio` container to report healthy
 #   4. on failure: bring the previous SHA back up, then exit non-zero
-#   5. on success: record <sha> in .env and prune images to current + previous
+#   5. on success: record <sha> in .env, recreate caddy if the Caddyfile changed
+#      since the last deploy, and prune images to current + previous
 #
 # State lives in .env (IMAGE_TAG=<sha>), which docker compose reads on its own,
 # so plain `docker compose ps/logs` on the host always matches what is deployed.
+# .caddyfile.sha256 holds the hash of the Caddyfile caddy was last (re)created
+# with. Rollback does not revert the Caddyfile: it is not versioned per SHA.
 set -euo pipefail
 
 IMAGE_REPO="${IMAGE_REPO:-ghcr.io/kdgerona/portfolio-v2}"
@@ -49,6 +52,24 @@ ensure_caddy_ports() {
     log "caddy has no published port 80; recreating it"
     IMAGE_TAG="$1" docker compose up -d --force-recreate caddy
   fi
+}
+
+# The Caddyfile is a single-file bind mount and CI replaces it (new inode), so a
+# running caddy keeps the old contents and `up -d` sees no config change. Recreate
+# caddy when the file's hash differs from the recorded one (or none is recorded).
+# The hash is saved only after a successful recreate, so a failure is retried.
+sync_caddyfile() {
+  local new old=""
+  [[ -f Caddyfile ]] || return 0
+  new="$(sha256sum Caddyfile | cut -d' ' -f1)"
+  [[ -f .caddyfile.sha256 ]] && old="$(cat .caddyfile.sha256)"
+  if [[ $new == "$old" ]]; then
+    log "Caddyfile unchanged; leaving caddy alone"
+    return 0
+  fi
+  log "Caddyfile changed (or first run); recreating caddy"
+  IMAGE_TAG="$1" docker compose up -d --force-recreate caddy || return 1
+  printf '%s\n' "$new" > .caddyfile.sha256.tmp && mv .caddyfile.sha256.tmp .caddyfile.sha256
 }
 
 compose_up() { IMAGE_TAG="$1" docker compose up -d --remove-orphans && ensure_caddy_ports "$1"; }
@@ -99,6 +120,9 @@ IMAGE_TAG="$NEW_TAG" docker compose pull portfolio
 if compose_up "$NEW_TAG" && wait_healthy "$NEW_TAG"; then
   printf 'IMAGE_TAG=%s\n' "$NEW_TAG" > .env.tmp && mv .env.tmp .env
   log "deploy OK: $NEW_TAG is healthy"
+  # The app is already live and healthy; a caddy failure must not roll it back,
+  # but it must fail the run so the stale edge config is noticed and retried.
+  sync_caddyfile "$NEW_TAG" || die "release $NEW_TAG is live, but recreating caddy for the new Caddyfile failed"
 else
   log "deploy of $NEW_TAG FAILED"
   IMAGE_TAG="$NEW_TAG" docker compose logs --tail 40 portfolio || true
