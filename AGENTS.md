@@ -38,6 +38,7 @@ Run from the repo root. There is no test script.
 - `components/` — shared UI (Navbar, Footer, Hero, PageHeader, ProjectCard/ProjectGallery, RepoCard, ContactForm, ThemeToggle, Reveal, RoleRotator, SocialLinks, WaveBlob).
 - `data/` — all site content as typed TS: `site.ts`, `about.ts`, `projects.ts`, `skills.ts`.
 - `public/` — static assets; project screenshots under `public/projects/`.
+- `docs/adr/` — Architecture Decision Records (index in `docs/adr/README.md`). ADR 0001 is the as-built baseline; changing a recorded decision needs a new ADR.
 - `docs/superpowers/` — design specs (`specs/`) and implementation plans (`plans/`) for the About and Crafts pages. Read these before reworking those pages; don't duplicate them here.
 - `Dockerfile`, `docker-compose.yml`, `Caddyfile` — deployment. `.mcp.json` + `scripts/playwright-mcp.sh` — Playwright MCP.
 
