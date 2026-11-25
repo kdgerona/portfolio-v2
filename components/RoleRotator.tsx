@@ -5,8 +5,8 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 /**
  * Cycles through role titles with a slide-up animation.
- * Leading words render in ink, the last word in white — matching the
- * two-tone treatment of the hero headline.
+ * Leading words render in the foreground color, the last word in brand —
+ * the two-tone treatment of the hero headline.
  */
 export default function RoleRotator({
   roles,
@@ -41,8 +41,8 @@ export default function RoleRotator({
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="col-start-1 row-start-1 md:whitespace-nowrap"
         >
-          {lead && <span className="text-panel-ink">{lead} </span>}
-          <span className="text-white">{last}.</span>
+          {lead && <span className="text-foreground">{lead} </span>}
+          <span className="text-brand">{last}.</span>
         </motion.span>
       </AnimatePresence>
     </span>
