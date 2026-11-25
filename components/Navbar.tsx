@@ -24,24 +24,15 @@ export default function Navbar() {
           className="inline-flex items-center"
         >
           {/* The logo renders as two mask layers colored by theme tokens:
-              the KDG mark (white on the blue home hero, brand blue elsewhere) and the
-              KEVINDAVEGERONA name text on a transparent background (black in light mode,
-              light in dark mode so it stays visible) */}
+              the KDG mark in brand blue and the KEVINDAVEGERONA name text in the
+              foreground color (dark in light mode, light in dark mode) */}
           <span
             role="img"
             aria-label={`${site.shortName} logo`}
             className="relative block size-20 md:size-28"
           >
-            <span
-              className={`absolute inset-0 [mask-image:url(/logo-mark.png)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] ${
-                pathname === "/" ? "bg-white" : "bg-brand"
-              }`}
-            />
-            <span
-              className={`absolute inset-0 [mask-image:url(/logo-name.png)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] ${
-                pathname === "/" ? "bg-panel-ink" : "bg-foreground"
-              }`}
-            />
+            <span className="absolute inset-0 bg-brand [mask-image:url(/logo-mark.png)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]" />
+            <span className="absolute inset-0 bg-foreground [mask-image:url(/logo-name.png)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]" />
           </span>
         </Link>
 
